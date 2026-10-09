@@ -33,3 +33,6 @@ else
     mkdir "$project_dir"
     echo "Created project directory: $project_dir"
 fi
+mkdir -p "$project_dir/Helpers"
+mkdir -p "$project_dir/reports"
+echo "created the helpers and reports directories"
