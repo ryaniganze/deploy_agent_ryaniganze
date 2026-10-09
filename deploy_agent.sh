@@ -36,3 +36,7 @@ fi
 mkdir -p "$project_dir/Helpers"
 mkdir -p "$project_dir/reports"
 echo "created the helpers and reports directories"
+cp templates/attendance_checker.py "$project_dir/"
+cp templates/config.json "$project_dir/Helpers/"
+
+echo "Application and configuration files deployed."
