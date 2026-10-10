@@ -43,8 +43,9 @@ echo "Application and configuration files deployed."
 
 echo "Choose how to build the roster:"
 echo "A. Copy students from the template"
+echo "B. Generate a fresh roster"
 
-read -p "Enter A to continue: " roster_choice
+read -p "Enter A or B: " roster_choice
 
 if [ "$roster_choice" = "A" ] || [ "$roster_choice" = "a" ]
 then
@@ -58,7 +59,33 @@ then
         echo "Error: enter a whole number between 1 and 10."
         exit 1
     fi
+
+elif [ "$roster_choice" = "B" ] || [ "$roster_choice" = "b" ]
+then
+    read -p "How many students do you want to create (1-10)? " student_count
+
+    if [[ "$student_count" =~ ^[0-9]+$ ]] && [ "$student_count" -ge 1 ] && [ "$student_count" -le 10 ]
+    then
+        echo "mail,Names,Attendance Count,Absence Count" > "$project_dir/Helpers/assets.csv"
+
+        names=("Alice Johnson" "Bob Smith" "Charlie Davis" "Diana Prince" "Ethan Cole" "Fatima Noor" "George Mensah" "Hannah Kim" "Ibrahim Osei" "Jasmine Lee")
+        emails=("alice@example.com" "bob@example.com" "charlie@example.com" "diana@example.com" "ethan@example.com" "fatima@example.com" "george@example.com" "hannah@example.com" "ibrahim@example.com" "jasmine@example.com")
+
+        for ((i=0; i<student_count; i++))
+        do
+            echo "${emails[$i]},${names[$i]},0,0" >> "$project_dir/Helpers/assets.csv"
+        done
+
+        sed -i 's/"total_sessions": 5/"total_sessions": 1/' "$project_dir/Helpers/config.json"
+
+        echo "Generated $student_count students with zero prior attendance and absence counts."
+        echo "Configuration updated: total_sessions is now 1."
+    else
+        echo "Error: enter a whole number between 1 and 10."
+        exit 1
+    fi
+
 else
-    echo "Invalid choice. Enter A for now."
+    echo "Invalid choice. Enter A or B."
     exit 1
 fi
