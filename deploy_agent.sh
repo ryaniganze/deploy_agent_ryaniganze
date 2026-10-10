@@ -89,3 +89,30 @@ else
     echo "Invalid choice. Enter A or B."
     exit 1
 fi
+
+read -p "Do you want to update the alert thresholds? (y/n): " update_thresholds
+
+if [ "$update_thresholds" = "y" ] || [ "$update_thresholds" = "Y" ]
+then
+    read -p "Enter warning threshold (default 75): " warning
+    read -p "Enter failure threshold (default 50): " failure
+
+    warning=${warning:-75}
+    failure=${failure:-50}
+
+    if [[ "$warning" =~ ^[0-9]+$ ]] &&
+       [[ "$failure" =~ ^[0-9]+$ ]] &&
+       [ "$warning" -le 100 ] &&
+       [ "$failure" -le 100 ]
+    then
+        sed -i 's/"warning": [0-9]*/"warning": '"$warning"'/' "$project_dir/Helpers/config.json"
+        sed -i 's/"failure": [0-9]*/"failure": '"$failure"'/' "$project_dir/Helpers/config.json"
+
+        echo "Alert thresholds updated successfully."
+    else
+        echo "Error: thresholds must be whole numbers between 0 and 100."
+        exit 1
+    fi
+else
+    echo "Keeping the default alert thresholds."
+fi
