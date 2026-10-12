@@ -69,7 +69,7 @@ then
 
     if [[ "$student_count" =~ ^[0-9]+$ ]] && [ "$student_count" -ge 1 ] && [ "$student_count" -le 10 ]
     then
-        echo "mail,Names,Attendance Count,Absence Count" > "$project_dir/Helpers/assets.csv"
+        echo "Email,Names,Attendance Count,Absence Count" > "$project_dir/Helpers/assets.csv"
 
         names=("Alice Johnson" "Bob Smith" "Charlie Davis" "Diana Prince" "Ethan Cole" "Fatima Noor" "George Mensah" "Hannah Kim" "Ibrahim Osei" "Jasmine Lee")
         emails=("alice@example.com" "bob@example.com" "charlie@example.com" "diana@example.com" "ethan@example.com" "fatima@example.com" "george@example.com" "hannah@example.com" "ibrahim@example.com" "jasmine@example.com")
