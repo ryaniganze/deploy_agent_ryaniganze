@@ -20,6 +20,25 @@ if [[ ! "$project_name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
 fi
 
 project_dir="attendance_tracker_${project_name}"
+deployment_interrupted() {
+    echo
+    echo "Deployment interrupted. Archiving the incomplete project..."
+    trap - INT TSTP
+
+    if [ -d "$project_dir" ]; then
+    if zip -r "${project_dir}_archive.zip" "$project_dir"; then
+        echo "Incomplete project archived as ${project_dir}_archive.zip"
+    else
+        echo "Error: failed to archive the incomplete project."
+    fi
+else
+        echo "No project directory exists to archive."
+    fi
+
+    exit 130
+}
+
+trap deployment_interrupted INT TSTP
 if [ -d "$project_dir" ]
 then
 	 read -p "Directory $project_dir already exists. Overwrite it? (y/n): " answer
@@ -125,6 +144,7 @@ else
 fi
 
 echo "Starting the attendance application to verify deployment..."
+trap - INT TSTP
 
 (
     cd "$project_dir" || exit 1
