@@ -38,6 +38,9 @@ mkdir -p "$project_dir/reports"
 echo "created the helpers and reports directories"
 cp templates/attendance_checker.py "$project_dir/"
 cp templates/config.json "$project_dir/Helpers/"
+chmod +x "$project_dir/attendance_checker.py"
+chmod 600 "$project_dir/Helpers/config.json"
+echo "Permissions set: application executable; config restricted to owner."
 
 echo "Application and configuration files deployed."
 
