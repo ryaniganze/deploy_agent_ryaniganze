@@ -13,7 +13,11 @@ fi
 
 echo "Pre-flight checks passed."
 
-read -p "Enter project name: " project_name
+read -r -p "Enter project name: " project_name
+if [[ ! "$project_name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+    echo "Error: project name may contain only letters, numbers, underscores, and hyphens."
+    exit 1
+fi
 
 project_dir="attendance_tracker_${project_name}"
 if [ -d "$project_dir" ]
