@@ -119,3 +119,10 @@ then
 else
     echo "Keeping the default alert thresholds."
 fi
+
+echo "Starting the attendance application to verify deployment..."
+
+(
+    cd "$project_dir" || exit 1
+    python3 attendance_checker.py
+)
