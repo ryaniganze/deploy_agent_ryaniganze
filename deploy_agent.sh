@@ -1,4 +1,6 @@
 #!/bin/bash
+
+deploy_application() {
 if ! command -v python3 > /dev/null
 then
     echo "Error: python3 is not installed."
@@ -142,11 +144,76 @@ then
 else
     echo "Keeping the default alert thresholds."
 fi
+echo
+}
 
-echo "Starting the attendance application to verify deployment..."
-trap - INT TSTP
+echo "Student Attendance Tracker"
+echo "1. Deploy the application"
+echo "2. Run the application"
+echo "3. Archive log files"
+echo "4. Exit"
+read -r -p "Choose an option (1-4): " feature_choice
 
-(
-    cd "$project_dir" || exit 1
-    python3 attendance_checker.py
-)
+case "$feature_choice" in
+    1)
+        deploy_application
+        ;;
+    2)
+        read -r -p "Enter project name: " project_name
+        if [[ ! "$project_name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+            echo "Error: invalid project name."
+            exit 1
+        fi
+        project_dir="attendance_tracker_${project_name}"
+        if [ -f "$project_dir/attendance_checker.py" ]; then
+            cd "$project_dir" || exit 1
+            python3 attendance_checker.py
+        else
+            echo "Error: deployed project or application not found."
+            exit 1
+        fi
+        ;;
+    3)
+        read -r -p "Enter project name: " project_name
+        if [[ ! "$project_name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+            echo "Error: invalid project name."
+            exit 1
+        fi
+        project_dir="attendance_tracker_${project_name}"
+        if [ ! -d "$project_dir" ]; then
+            echo "Error: project directory not found."
+            exit 1
+        fi
+        timestamp=$(date +%Y%m%d_%H%M%S)
+        archived=0
+        for log_name in attendance absent
+        do
+            log_file="$project_dir/reports/${log_name}.log"
+            archive_dir="$project_dir/archives/${log_name}"
+            if [ -f "$log_file" ]; then
+                mkdir -p "$archive_dir"
+                archive_file="$archive_dir/${log_name}_${timestamp}.log"
+                if cp "$log_file" "$archive_file"; then
+                    echo "Archived: $archive_file"
+                    archived=1
+                else
+                    echo "Error archiving $log_file"
+                    exit 1
+                fi
+            else
+                echo "No ${log_name}.log found; skipping."
+            fi
+        done
+        if [ "$archived" -eq 0 ]; then
+            echo "No log files were available to archive."
+        fi
+        ;;
+    4)
+        echo "Goodbye."
+        exit 0
+        ;;
+    *)
+        echo "Error: choose an option from 1 to 4."
+        exit 1
+        ;;
+esac
