@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap deployment_interrupted INT TSTP
+
 deploy_application() {
 if ! command -v python3 > /dev/null
 then
@@ -23,24 +25,24 @@ fi
 
 project_dir="attendance_tracker_${project_name}"
 deployment_interrupted() {
-    echo
     echo "Deployment interrupted. Archiving the incomplete project..."
     trap - INT TSTP
 
     if [ -d "$project_dir" ]; then
-    if zip -r "${project_dir}_archive.zip" "$project_dir"; then
-        echo "Incomplete project archived as ${project_dir}_archive.zip"
+        if zip -r "${project_dir}_archive.zip" "$project_dir"; then
+            echo "Incomplete project archived as ${project_dir}_archive.zip"
+            rm -rf -- "$project_dir"
+            echo "Incomplete project directory removed."
+        else
+            echo "Error: failed to archive the incomplete project. Directory preserved."
+        fi
     else
-        echo "Error: failed to archive the incomplete project."
-    fi
-else
         echo "No project directory exists to archive."
     fi
 
     exit 130
 }
 
-trap deployment_interrupted INT TSTP
 if [ -d "$project_dir" ]
 then
 	 read -p "Directory $project_dir already exists. Overwrite it? (y/n): " answer
